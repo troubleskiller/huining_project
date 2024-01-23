@@ -96,7 +96,7 @@ class InitCalculate {
       this.connection});
 
   InitCalculate.fromJson(dynamic json) {
-    nom = json['位号'];
+    nom = json['位号'].toString();
     diameterA = json['套管大径A'];
     diameterB = json['套管小径B'];
     diameterHole = json['套管孔径'];
@@ -113,7 +113,7 @@ class InitCalculate {
     pressure = json['压力'];
     stressAllowable = json['许用应力'];
     resonance = json['共振'];
-    connection = json['工艺连接'];
+    connection = json['工艺连接'].toString();
   }
 
   @override
@@ -317,6 +317,9 @@ class CommonDataSource extends DataGridSource {
     // To avoid committing the [DataGridCell] value that was previously edited
     // into the current non-modified [DataGridCell].
     newCellValue = null;
+    if (column.columnName == 'delete') {
+      return null;
+    }
 
     return Container(
       padding: const EdgeInsets.all(8.0),

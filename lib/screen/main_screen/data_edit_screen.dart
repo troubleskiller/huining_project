@@ -37,6 +37,9 @@ class _DataEditScreenState extends State<DataEditScreen> {
               listNode.data!.nom = v;
             },
             validator: (v) {
+              if (widget.listNodes.map((e) => e?.nom).toList().contains(v)) {
+                return '重复';
+              }
               return v!.isEmpty ? 'required' : null;
             },
           ),

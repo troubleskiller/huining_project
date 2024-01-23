@@ -9,6 +9,9 @@ import 'package:oem_huining_anhui/model/list_node.dart';
 import 'package:oem_huining_anhui/screen/main_screen/data_edit_screen.dart';
 import 'package:oem_huining_anhui/widget/input_widget/tro_input_widget.dart';
 import 'package:oem_huining_anhui/widget/input_widget/tro_select_widget.dart';
+import 'package:oem_huining_anhui/widget/select_button/dialog/mult_select_dialog.dart';
+import 'package:oem_huining_anhui/widget/select_button/util/multi_select_item.dart';
+import 'package:oem_huining_anhui/widget/select_button/util/multi_select_list_type.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class MainPage extends StatefulWidget {
@@ -21,6 +24,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   ScrollController scrollController = ScrollController();
   List<ListNode> listNodes = [];
+  List<ListNode> ans = [];
   ListNode curListNode = ListNode();
 
   @override
@@ -31,10 +35,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   ///导出excel文件
-  Future<void> downLoad() async {
+  Future<void> downLoad(List<ListNode> list) async {
     excel.Excel outPutExcel = excel.Excel.createExcel();
-    excel.Sheet initCalculate = outPutExcel['Sheet1'];
-    excel.Sheet calculateResult = outPutExcel['Sheet2'];
+    excel.Sheet initCalculate = outPutExcel['输入表'];
+    excel.Sheet calculateResult = outPutExcel['输出表'];
     initCalculate.appendRow([
       '位号',
       '套管大径A',
@@ -56,8 +60,8 @@ class _MainPageState extends State<MainPage> {
       '工艺连接',
       '备注'
     ]);
-    for (int i = 0; i < listNodes.length; i++) {
-      ListNode date = listNodes[i];
+    for (int i = 0; i < list.length; i++) {
+      ListNode date = list[i];
       InitCalculate tmp = date.data ?? InitCalculate();
       initCalculate.appendRow([
         tmp.nom,
@@ -100,8 +104,8 @@ class _MainPageState extends State<MainPage> {
       '疲劳许用应力',
       '合格',
     ]);
-    for (int i = 0; i < listNodes.length; i++) {
-      ListNode date = listNodes[i];
+    for (int i = 0; i < list.length; i++) {
+      ListNode date = list[i];
       CalculateResult tmp = date.ans ?? CalculateResult();
       bool? isQualified = tmp.isQualified;
       String ans = '';
@@ -138,19 +142,41 @@ class _MainPageState extends State<MainPage> {
     var fileBytes = outPutExcel.save();
     final picker = FilePicker.platform;
     var directory = await picker.saveFile(
-      fileName: 'outPutExcel.xlsx',
+      dialogTitle: '保存文件',
+      fileName: '导出文件.xlsx',
       type: FileType.custom,
       allowedExtensions: [
         'xlsx',
       ],
     );
-    // var directory = await getLibraryDirectory();
-    // final picker = FilePicker.platform;
-    // picker.saveFile()
 
     File("$directory")
       ..createSync(recursive: true)
       ..writeAsBytesSync(fileBytes!);
+  }
+
+  void _showMultiSelect(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        ans = listNodes;
+        return MultiSelectDialog(
+          height: 500,
+          width: 500,
+          cancelText: Text('取消保存'),
+          confirmText: Text('下一步'),
+          title: Text('选择要导出的数据'),
+          items: listNodes
+              .map((e) => MultiSelectItem<ListNode>(e, e.nom ?? ''))
+              .toList(),
+          initialValue: ans,
+          listType: MultiSelectListType.LIST,
+          onConfirm: (values) {
+            downLoad(values);
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -165,7 +191,8 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          downLoad();
+          // downLoad();
+          _showMultiSelect(context);
         },
         tooltip: '数据导出',
         child: const Icon(Icons.outbond),
@@ -248,8 +275,8 @@ class _MainPageState extends State<MainPage> {
                           navigationMode: GridNavigationMode.cell,
                           source: commonDataSource,
                           columnWidthMode: ColumnWidthMode.fill,
-                          editingGestureType: EditingGestureType.tap,
-                          onCellDoubleTap: (data) {
+                          editingGestureType: EditingGestureType.doubleTap,
+                          onCellTap: (data) {
                             setState(() {
                               curListNode = listNodes.singleWhere((element) =>
                                   element.nom ==

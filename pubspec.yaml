@@ -42,6 +42,8 @@ dependencies:
   get: 4.6.5
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
+  bruno: ^3.4.3
+  multiselect_dropdown_flutter: ^0.0.7
 
 
 
