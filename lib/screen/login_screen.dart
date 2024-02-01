@@ -32,12 +32,14 @@ class _LoginState extends State<Login> {
 
   Widget _buildPageContent() {
     var appName = Text(
-      "安徽徽宁通道计算软件",
-      style: TextStyle(fontSize: 16, color: Colors.blue),
+      "安徽徽宁套管振动及强度计算软件",
+      style: TextStyle(fontSize: 16, color: Colors.black),
       textScaleFactor: 3.2,
     );
     return Container(
-      color: Colors.cyan.shade100,
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/img.png'), fit: BoxFit.cover)),
       child: ListView(
         children: <Widget>[
           SizedBox(height: 40.0),
@@ -45,12 +47,6 @@ class _LoginState extends State<Login> {
           SizedBox(height: 40.0),
           _buildLoginForm(),
           SizedBox(height: 40.0),
-          // Column(
-          //   children: [
-          //     Text('admin'),
-          //     Text('pwd'),
-          //   ],
-          // )
         ],
       ),
     );
@@ -68,7 +64,7 @@ class _LoginState extends State<Login> {
               padding: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                color: Colors.white,
+                color: Color.fromRGBO(255, 255, 255, 150),
               ),
               child: Form(
                 key: formKey,
@@ -172,12 +168,16 @@ class _LoginState extends State<Login> {
       _loginSuccess();
       return;
     }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("密码错误"),
+    ));
+
     focusNodePassword.requestFocus();
     return;
   }
 
   bool isAuthenticated(User user) {
-    return user.userName == 'admin' && user.passWord == '123456';
+    return user.userName == 'huining' && user.passWord == 'huining';
   }
 
   _loginSuccess() async {

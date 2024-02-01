@@ -16,10 +16,10 @@ class _DataEditScreenState extends State<DataEditScreen> {
   @override
   Widget build(BuildContext context) {
     ListNode listNode = ListNode(
-        nom: '请输入位号',
-        data: InitCalculate(),
-        ans: CalculateResult(),
-        state: '请输入状态');
+      nom: '请输入位号',
+      data: InitCalculate(),
+      ans: CalculateResult(),
+    );
     if (widget.listNodes.isNotEmpty) {
       listNode = widget.listNodes.last!.copyWith();
     }
@@ -41,13 +41,6 @@ class _DataEditScreenState extends State<DataEditScreen> {
                 return '重复';
               }
               return v!.isEmpty ? 'required' : null;
-            },
-          ),
-          TroInput(
-            value: listNode.state,
-            label: '状态',
-            onSaved: (v) {
-              listNode.state = v;
             },
           ),
         ],

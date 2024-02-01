@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:oem_huining_anhui/model/common_constant.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 ///这是数据展示列表那边的数据模型
-class ListNode {
+class ListNode extends ChangeNotifier {
   String? nom;
-  String? state;
+
   InitCalculate? data;
   CalculateResult? ans;
 
-  ListNode({this.nom, this.state, this.data, this.ans});
+  ListNode({this.nom, this.data, this.ans});
 
   ListNode copyWith(
           {String? nom,
           String? state,
           InitCalculate? data,
           CalculateResult? ans}) =>
-      ListNode(
-          nom: this.nom, state: this.state, data: this.data, ans: this.ans);
+      ListNode(nom: this.nom, data: this.data, ans: this.ans);
 }
 
 ///这是具体数据包含的内容（入参：计算之前的）
@@ -75,6 +75,14 @@ class InitCalculate {
   //工艺连接
   String? connection;
 
+  //套管材质
+  String? material;
+
+  //管线尺寸单位【1】in 【2】mm
+  int? curXX;
+  //压力单位【1】Mpa 【2】Kpa
+  int? curYY;
+
   InitCalculate(
       {this.nom,
       this.diameterA,
@@ -91,6 +99,8 @@ class InitCalculate {
       this.resistanceE,
       this.densityOfFlow,
       this.pressure,
+      this.curXX,
+      this.curYY,
       this.stressAllowable,
       this.resonance,
       this.connection});
@@ -105,7 +115,6 @@ class InitCalculate {
     pipeSize = json['管线尺寸'];
     tmp = json['使用温度'];
     elasticModulus = json['弹性模量'];
-    densityOfMaterial = json['材质密度'];
     flowRate = json['介质流速'];
     viscosity = json['黏度'];
     resistanceE = json['阻力系数'];
@@ -113,12 +122,17 @@ class InitCalculate {
     pressure = json['压力'];
     stressAllowable = json['许用应力'];
     resonance = json['共振'];
+    curXX = 1;
+    curYY = 1;
     connection = json['工艺连接'].toString();
+    material = json['套管材质'].toString();
+    densityOfMaterial = materialMap[material] ?? 0.29;
+    print(densityOfMaterial);
   }
 
   @override
   String toString() {
-    return 'InitCalculate{nom: $nom, diameterA: $diameterA, diameterB: $diameterB, diameterHole: $diameterHole, insertDeep: $insertDeep, boss: $boss, pipeSize: $pipeSize, tmp: $tmp, elasticModulus: $elasticModulus, densityOfMaterial: $densityOfMaterial, flowRate: $flowRate, viscosity: $viscosity, resistanceE: $resistanceE, densityOfFlow: $densityOfFlow, pressure: $pressure, stressAllowable: $stressAllowable, resonance: $resonance, connection: $connection,}';
+    return 'InitCalculate{nom: $nom, diameterA: $diameterA, diameterB: $diameterB, diameterHole: $diameterHole, insertDeep: $insertDeep, boss: $boss, pipeSize: $pipeSize, tmp: $tmp, elasticModulus: $elasticModulus, densityOfMaterial: $densityOfMaterial, flowRate: $flowRate, viscosity: $viscosity, resistanceE: $resistanceE, densityOfFlow: $densityOfFlow, pressure: $pressure, stressAllowable: $stressAllowable, resonance: $resonance, connection: $connection, material: $material, curXX: $curXX, curYY: $curYY}';
   }
 }
 
@@ -209,13 +223,11 @@ class CommonDataSource extends DataGridSource {
   CommonDataSource({
     required List<ListNode> commonData,
     required Function editNom,
-    required Function editState,
     required Function deleteNode,
   }) {
     dataGridRows = commonData.map<DataGridRow>((dataGridRow) {
       return DataGridRow(cells: [
         DataGridCell<String>(columnName: 'nom', value: dataGridRow.nom),
-        DataGridCell<String>(columnName: 'state', value: dataGridRow.state),
         DataGridCell<Widget>(
             columnName: 'delete',
             value: IconButton(
@@ -227,16 +239,12 @@ class CommonDataSource extends DataGridSource {
       ]);
     }).toList();
     editNomFun = editNom;
-    editStateFun = editState;
   }
 
   List<DataGridRow> dataGridRows = [];
 
   //编辑位号
   Function? editNomFun;
-
-  //编辑状态
-  Function? editStateFun;
 
   //删除按钮
   Function? deleteNodeFun;
@@ -272,11 +280,6 @@ class CommonDataSource extends DataGridSource {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<String>(columnName: 'nom', value: newCellValue);
       editNomFun?.call(dataRowIndex, newCellValue);
-    } else if (column.columnName == 'state') {
-      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<String>(columnName: 'state', value: newCellValue);
-      editStateFun?.call(dataRowIndex, newCellValue);
-      // _employees[dataRowIndex].name = newCellValue.toString();
     }
   }
 

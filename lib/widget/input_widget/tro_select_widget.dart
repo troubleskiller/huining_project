@@ -34,7 +34,7 @@ class TroSelect extends TroFormField {
                     child: Text(
                       v.label!,
                       style: TextStyle(
-                          overflow: TextOverflow.ellipsis,
+                          overflow: TextOverflow.visible,
                           color: Colors.black,
                           fontSize: 12),
                     ),
