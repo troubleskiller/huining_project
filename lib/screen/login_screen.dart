@@ -9,7 +9,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  User user = User();
+  User user = User(userName: 'huining', passWord: 'huining');
   FocusNode focusNodeUserName = FocusNode();
   FocusNode focusNodePassword = FocusNode();
   bool isFaceRecognition = false;

@@ -25,7 +25,10 @@ class TroInput extends TroFormField {
           builder: (state) {
             return TextFormField(
               maxLines: maxLines,
-              style: valueStyle,
+              style: valueStyle ??
+                  TextStyle(
+                    fontSize: 12,
+                  ),
               decoration: InputDecoration(
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 5, vertical: 3),

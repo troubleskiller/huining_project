@@ -337,11 +337,18 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                         value: initCalculate.material,
                         dataList: [
                           SelectOptionVO(value: '304', label: '304'),
+                          SelectOptionVO(value: '316', label: '316'),
+                          SelectOptionVO(value: '304L', label: '304L'),
+                          SelectOptionVO(value: '316L', label: '316L'),
+                          SelectOptionVO(value: 'GH3039', label: 'GH3039'),
                           SelectOptionVO(value: 'GH3030', label: 'GH3030'),
                           SelectOptionVO(value: '310S', label: '310S'),
+                          SelectOptionVO(value: 'GH2520', label: 'GH2520'),
+                          SelectOptionVO(value: '321SS', label: '321SS'),
                           SelectOptionVO(value: 'Monel', label: 'Monel'),
                           SelectOptionVO(value: '钽Ta', label: '钽Ta'),
                           SelectOptionVO(value: '钛Ti', label: '钛Ti'),
+                          SelectOptionVO(value: '双相不锈钢', label: '双相不锈钢'),
                           SelectOptionVO(
                               value: 'Inconel600', label: 'Inconel600'),
                           SelectOptionVO(value: 'S31803', label: 'S31803'),
@@ -548,8 +555,8 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                         value: '${calculateResult.freRatio ?? '等待计算'}',
                         valueStyle: TextStyle(
                           color: (calculateResult.freRatio ?? 0) < 0.8
-                              ? Colors.red
-                              : Colors.green,
+                              ? Colors.green
+                              : Colors.red,
                         ),
                         labelStyle: TextStyle(
                           fontSize: 12,
