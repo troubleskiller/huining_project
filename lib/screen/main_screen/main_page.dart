@@ -38,8 +38,8 @@ class _MainPageState extends State<MainPage> {
   ///导出excel文件
   Future<void> downLoad(List<ListNode> list) async {
     excel.Excel outPutExcel = excel.Excel.createExcel();
-    excel.Sheet initCalculate = outPutExcel['输入表'];
-    excel.Sheet calculateResult = outPutExcel['输出表'];
+    excel.Sheet initCalculate = outPutExcel['sheet1'];
+    excel.Sheet calculateResult = outPutExcel['sheet2'];
     initCalculate.appendRow([
       '位号',
       '套管大径A',
