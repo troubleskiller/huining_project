@@ -7,6 +7,7 @@ class TroSelect extends TroFormField {
     String? label,
     String? value,
     double? width,
+    double? valueWidth,
     double? labelWidth,
     TextStyle? labelStyle,
     ValueChanged? onChange,
@@ -24,13 +25,16 @@ class TroSelect extends TroFormField {
                 contentPadding: EdgeInsets.symmetric(horizontal: 5),
                 border: OutlineInputBorder(),
               ),
-              style: TextStyle(overflow: TextOverflow.ellipsis),
+              style: TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  fontSize: 12,
+                  fontFamily: "NotoSerifSC"),
               value: value,
               items: dataList.map((v) {
                 return DropdownMenuItem<String>(
                   value: v.value as String?,
                   child: Container(
-                    width: 60,
+                    width: valueWidth ?? 60,
                     child: Text(
                       v.label!,
                       style: TextStyle(

@@ -26,7 +26,6 @@ class _MainPageState extends State<MainPage> {
   DataGridController _dataGridController = DataGridController();
   List<ListNode> listNodes = [];
   List<ListNode> ans = [];
-  ListNode curListNode = ListNode();
 
   @override
   void initState() {
@@ -38,32 +37,62 @@ class _MainPageState extends State<MainPage> {
   ///导出excel文件
   Future<void> downLoad(List<ListNode> list) async {
     excel.Excel outPutExcel = excel.Excel.createExcel();
-    excel.Sheet initCalculate = outPutExcel['sheet1'];
-    excel.Sheet calculateResult = outPutExcel['sheet2'];
+    excel.Sheet initCalculate =
+        outPutExcel[outPutExcel.getDefaultSheet() ?? 'sheet1'];
     initCalculate.appendRow([
       '位号',
-      '套管大径A',
-      '套管小径B',
-      '套管孔径',
-      '插深',
-      '凸台',
-      '管线尺寸',
+      '套管大径A(mm)',
+      '套管小径B(mm)',
+      '套管孔径(mm)',
+      '插深(mm)',
+      '凸台(mm)',
+      '管线尺寸(in)',
       '使用温度',
-      '弹性模量',
-      '材质密度',
-      '介质流速',
-      '黏度',
-      '阻力系数',
-      '流体密度',
-      '压力',
-      '许用应力',
-      '共振',
+      '弹性模量(10^6psi)',
+      '材质密度(kg/m3)',
+      '介质流速(m/s)',
+      '黏度(Ns/m2)',
+      '阻力系数Cd',
+      '流体密度(kg/m3)',
+      '压力(MPa)',
+      '许用应力(MPa)',
+      '共振CL',
       '工艺连接',
-      '备注'
+      '套管材质',
+      '系数Kf',
+      '自振频率fn(Hz)',
+      '激励频率fw(Hz)',
+      '频率比',
+      'Re',
+      '截面A(m2)',
+      '流体力F(N)',
+      '跟部弯矩M(N*mm)',
+      '根部弯应力σB(MPa)',
+      '外压应力σP(MPa)',
+      '共振流速Vr(m/s)',
+      '共振Re',
+      '共振FL(N)',
+      '共振弯距',
+      '共振根部弯应力σrB(MPa)',
+      '疲劳许用应力σra(MPa)',
+      '是否合格',
     ]);
     for (int i = 0; i < list.length; i++) {
       ListNode date = list[i];
       InitCalculate tmp = date.data ?? InitCalculate();
+      CalculateResult res = date.ans ?? CalculateResult();
+      bool? isQualified = res.isQualified;
+      String ans = '';
+      if (isQualified != null) {
+        if (isQualified) {
+          ans = '合格';
+        } else {
+          ans = '不合格';
+        }
+      } else {
+        ans = '无法确定';
+      }
+
       initCalculate.appendRow([
         tmp.nom,
         tmp.diameterA,
@@ -83,61 +112,40 @@ class _MainPageState extends State<MainPage> {
         tmp.stressAllowable,
         tmp.resonance,
         tmp.connection,
-      ]);
-    }
-    calculateResult.appendRow([
-      '系数Kf',
-      '自振频率',
-      '激励频率',
-      '频率比',
-      'Re',
-      '截面',
-      '流体力',
-      '跟部弯矩',
-      '根部弯应力',
-      '外压应力',
-      '共振流速',
-      '共振Re',
-      '共振Fl',
-      '共振弯距',
-      '共振根部弯应力',
-      '疲劳许用应力',
-      '合格',
-    ]);
-    for (int i = 0; i < list.length; i++) {
-      ListNode date = list[i];
-      CalculateResult tmp = date.ans ?? CalculateResult();
-      bool? isQualified = tmp.isQualified;
-      String ans = '';
-      if (isQualified != null) {
-        if (isQualified) {
-          ans = '合格';
-        } else {
-          ans = '不合格';
-        }
-      } else {
-        ans = '无法确定';
-      }
-
-      calculateResult.appendRow([
-        tmp.kF,
-        tmp.naturalFre,
-        tmp.excFrequency,
-        tmp.freRatio,
-        tmp.rE,
-        tmp.section,
-        tmp.fluidForce,
-        tmp.bendingDistance,
-        tmp.fatigue,
-        tmp.stressOutside,
-        tmp.speedResonance,
-        tmp.resonanceRe,
-        tmp.resonanceFL,
-        tmp.resonanceML,
-        tmp.resonanceFatigue,
-        tmp.stressFatigue,
+        tmp.material,
+        res.kF,
+        res.naturalFre,
+        res.excFrequency,
+        res.freRatio,
+        res.rE,
+        res.section,
+        res.fluidForce,
+        res.bendingDistance,
+        res.fatigue,
+        res.stressOutside,
+        res.speedResonance,
+        res.resonanceRe,
+        res.resonanceFL,
+        res.resonanceML,
+        res.resonanceFatigue,
+        res.stressFatigue,
         ans
       ]);
+    }
+    for (int i = 1; i < list.length; i++) {
+      excel.CellIndex cellIndex =
+          excel.CellIndex.indexByColumnRow(columnIndex: 34, rowIndex: i);
+      excel.CellIndex ratioCellIndex =
+          excel.CellIndex.indexByColumnRow(columnIndex: 21, rowIndex: i);
+      if (initCalculate.cell(ratioCellIndex).value > 0.8) {
+        initCalculate.updateCell(
+            ratioCellIndex, initCalculate.cell(ratioCellIndex).value,
+            cellStyle: excel.CellStyle(backgroundColorHex: 'FFFF00'));
+      }
+      if (initCalculate.cell(cellIndex).value.toString() == '不合格') {
+        initCalculate.updateCell(cellIndex, '不合格',
+            cellStyle: excel.CellStyle(backgroundColorHex: 'FF0000'));
+      }
     }
     var fileBytes = outPutExcel.save();
     final picker = FilePicker.platform;
@@ -226,6 +234,7 @@ class _MainPageState extends State<MainPage> {
           setState(() {});
         },
         deleteNode: (index) {
+          listNodes.removeAt(index);
           listNodes.removeWhere((element) => element.nom == index);
           setState(() {});
         });
@@ -279,13 +288,17 @@ class _MainPageState extends State<MainPage> {
                             // editingGestureType: EditingGestureType.doubleTap,
                             sortingGestureType: SortingGestureType.doubleTap,
                             onCellTap: (data) {
-                              calculateBuildWidgetState.set(
-                                  listNodes.singleWhere((element) =>
-                                      element.nom ==
-                                      commonDataSource.dataGridRows[
-                                              data.rowColumnIndex.rowIndex - 1]
-                                          .getCells()[0]
-                                          .value));
+                              calculateBuildWidgetState.set(listNodes[int.parse(
+                                  commonDataSource.dataGridRows[
+                                          data.rowColumnIndex.rowIndex - 1]
+                                      .getCells()[0]
+                                      .value)]);
+                              // listNodes.singleWhere((element) =>
+                              //     element.nom ==
+                              //     commonDataSource.dataGridRows[
+                              //             data.rowColumnIndex.rowIndex - 1]
+                              //         .getCells()[0]
+                              //         .value));
                               // setState(() {
                               //   curListNode = listNodes.singleWhere((element) =>
                               //       element.nom ==
@@ -303,6 +316,21 @@ class _MainPageState extends State<MainPage> {
                             //   });
                             // },
                             columns: [
+                              GridColumn(
+                                width: 80,
+                                visible: true,
+                                allowEditing: true,
+                                columnName: 'no',
+                                label: Container(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '序号',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
                               GridColumn(
                                 visible: true,
                                 allowEditing: true,
@@ -394,15 +422,8 @@ class _MainPageState extends State<MainPage> {
   ///右侧数据计算
   Widget buildCalculate() {
     return CalculateBuildWidget(
-      curListNode: curListNode,
-      calculate: (cur, res) {
-        print(cur.toString());
-        print(listNodes.map((e) => e.nom).toList());
-        if (!listNodes.map((e) => e.nom).toList().contains(cur.nom)) {
-          cur as ListNode;
-          cur.ans = res;
-          listNodes.add(cur);
-        }
+      calculate: (ListNode cur) {
+        listNodes.add(ListNode(nom: cur.nom, data: cur.data, ans: cur.ans));
         setState(() {});
       },
     );

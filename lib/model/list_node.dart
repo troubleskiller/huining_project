@@ -11,12 +11,22 @@ class ListNode extends ChangeNotifier {
 
   ListNode({this.nom, this.data, this.ans});
 
-  ListNode copyWith(
-          {String? nom,
-          String? state,
-          InitCalculate? data,
-          CalculateResult? ans}) =>
-      ListNode(nom: this.nom, data: this.data, ans: this.ans);
+  ListNode copy({
+    String? nom,
+    InitCalculate? data,
+    CalculateResult? ans,
+  }) {
+    return ListNode(
+        nom: nom ?? this.nom, data: data ?? this.data, ans: ans ?? this.ans);
+  }
+
+  factory ListNode.copyWith(ListNode listNode) {
+    return ListNode(
+      nom: listNode.nom,
+      data: InitCalculate.copyWith(listNode.data ?? InitCalculate()),
+      ans: listNode.ans,
+    );
+  }
 }
 
 ///这是具体数据包含的内容（入参：计算之前的）
@@ -80,6 +90,7 @@ class InitCalculate {
 
   //管线尺寸单位【1】in 【2】mm
   int? curXX;
+
   //压力单位【1】Mpa 【2】Kpa
   int? curYY;
 
@@ -103,31 +114,58 @@ class InitCalculate {
       this.curYY,
       this.stressAllowable,
       this.resonance,
+      this.material,
       this.connection});
 
   InitCalculate.fromJson(dynamic json) {
     nom = json['位号'].toString();
-    diameterA = json['套管大径A'];
-    diameterB = json['套管小径B'];
-    diameterHole = json['套管孔径'];
-    insertDeep = json['插深'];
-    boss = json['凸台'];
-    pipeSize = json['管线尺寸'];
+    diameterA = json['套管大径A(mm)'];
+    diameterB = json['套管小径B(mm)'];
+    diameterHole = json['套管孔径(mm)'];
+    insertDeep = json['插深(mm)'];
+    boss = json['凸台(mm)'];
+    pipeSize = json['管线尺寸(in)'];
     tmp = json['使用温度'];
-    elasticModulus = json['弹性模量'];
-    flowRate = json['介质流速'];
-    viscosity = json['黏度'];
-    resistanceE = json['阻力系数'];
-    densityOfFlow = json['流体密度'];
-    pressure = json['压力'];
-    stressAllowable = json['许用应力'];
-    resonance = json['共振'];
+    elasticModulus = json['弹性模量(10^6psi)'];
+    flowRate = json['介质流速(m/s)'];
+    viscosity = json['黏度(Ns/m2)'];
+    resistanceE = json['阻力系数Cd'];
+    densityOfFlow = json['流体密度(kg/m3)'];
+    pressure = json['压力(MPa)'];
+    stressAllowable = json['许用应力(MPa)'];
+    resonance = json['共振Cl'];
     curXX = 1;
     curYY = 1;
     connection = json['工艺连接'].toString();
     material = json['套管材质'].toString();
     densityOfMaterial = materialMap[material] ?? 0.29;
     print(densityOfMaterial);
+  }
+
+  factory InitCalculate.copyWith(InitCalculate initCalculate) {
+    return InitCalculate(
+      nom: initCalculate.nom,
+      diameterA: initCalculate.diameterA,
+      diameterB: initCalculate.diameterB,
+      diameterHole: initCalculate.diameterHole,
+      insertDeep: initCalculate.insertDeep,
+      boss: initCalculate.boss,
+      pipeSize: initCalculate.pipeSize,
+      tmp: initCalculate.tmp,
+      elasticModulus: initCalculate.elasticModulus,
+      densityOfMaterial: initCalculate.densityOfMaterial,
+      flowRate: initCalculate.flowRate,
+      viscosity: initCalculate.viscosity,
+      resistanceE: initCalculate.resistanceE,
+      densityOfFlow: initCalculate.densityOfFlow,
+      pressure: initCalculate.pressure,
+      curXX: initCalculate.curXX,
+      curYY: initCalculate.curYY,
+      stressAllowable: initCalculate.stressAllowable,
+      resonance: initCalculate.resonance,
+      material: initCalculate.material,
+      connection: initCalculate.connection,
+    );
   }
 
   @override
@@ -227,12 +265,15 @@ class CommonDataSource extends DataGridSource {
   }) {
     dataGridRows = commonData.map<DataGridRow>((dataGridRow) {
       return DataGridRow(cells: [
+        DataGridCell<String>(
+            columnName: 'no',
+            value: commonData.indexOf(dataGridRow).toString()),
         DataGridCell<String>(columnName: 'nom', value: dataGridRow.nom),
         DataGridCell<Widget>(
             columnName: 'delete',
             value: IconButton(
               onPressed: () {
-                deleteNode.call(dataGridRow.nom);
+                deleteNode.call(commonData.indexOf(dataGridRow));
               },
               icon: Icon(Icons.delete_outlined),
             )),

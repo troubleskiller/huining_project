@@ -21,7 +21,7 @@ class _DataEditScreenState extends State<DataEditScreen> {
       ans: CalculateResult(),
     );
     if (widget.listNodes.isNotEmpty) {
-      listNode = widget.listNodes.last!.copyWith();
+      listNode = ListNode.copyWith(widget.listNodes.last!);
     }
     // ListNode listNode = widget.listNodes?.last ?? ListNode().copyWith();
     var form = Form(
