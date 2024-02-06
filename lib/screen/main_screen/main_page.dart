@@ -40,6 +40,7 @@ class _MainPageState extends State<MainPage> {
     excel.Sheet initCalculate =
         outPutExcel[outPutExcel.getDefaultSheet() ?? 'sheet1'];
     initCalculate.appendRow([
+      '序号',
       '位号',
       '套管大径A(mm)',
       '套管小径B(mm)',
@@ -49,7 +50,7 @@ class _MainPageState extends State<MainPage> {
       '管线尺寸(in)',
       '使用温度',
       '弹性模量(10^6psi)',
-      '材质密度(kg/m3)',
+      '材质密度γ(lb/in3)',
       '介质流速(m/s)',
       '黏度(Ns/m2)',
       '阻力系数Cd',
@@ -62,7 +63,7 @@ class _MainPageState extends State<MainPage> {
       '系数Kf',
       '自振频率fn(Hz)',
       '激励频率fw(Hz)',
-      '频率比',
+      '频率比(r=fw/fn)',
       'Re',
       '截面A(m2)',
       '流体力F(N)',
@@ -72,7 +73,7 @@ class _MainPageState extends State<MainPage> {
       '共振流速Vr(m/s)',
       '共振Re',
       '共振FL(N)',
-      '共振弯距',
+      '共振弯距ML(N*mm)',
       '共振根部弯应力σrB(MPa)',
       '疲劳许用应力σra(MPa)',
       '是否合格',
@@ -94,6 +95,7 @@ class _MainPageState extends State<MainPage> {
       }
 
       initCalculate.appendRow([
+        i + 1,
         tmp.nom,
         tmp.diameterA,
         tmp.diameterB,
@@ -132,11 +134,12 @@ class _MainPageState extends State<MainPage> {
         ans
       ]);
     }
-    for (int i = 1; i < list.length; i++) {
+    for (int i = 1; i < list.length + 1; i++) {
       excel.CellIndex cellIndex =
-          excel.CellIndex.indexByColumnRow(columnIndex: 34, rowIndex: i);
+          excel.CellIndex.indexByColumnRow(columnIndex: 36, rowIndex: i);
+      print(initCalculate.cell(cellIndex).value.toString());
       excel.CellIndex ratioCellIndex =
-          excel.CellIndex.indexByColumnRow(columnIndex: 21, rowIndex: i);
+          excel.CellIndex.indexByColumnRow(columnIndex: 23, rowIndex: i);
       if (initCalculate.cell(ratioCellIndex).value > 0.8) {
         initCalculate.updateCell(
             ratioCellIndex, initCalculate.cell(ratioCellIndex).value,
@@ -235,7 +238,6 @@ class _MainPageState extends State<MainPage> {
         },
         deleteNode: (index) {
           listNodes.removeAt(index);
-          listNodes.removeWhere((element) => element.nom == index);
           setState(() {});
         });
     return Flexible(
@@ -289,10 +291,11 @@ class _MainPageState extends State<MainPage> {
                             sortingGestureType: SortingGestureType.doubleTap,
                             onCellTap: (data) {
                               calculateBuildWidgetState.set(listNodes[int.parse(
-                                  commonDataSource.dataGridRows[
-                                          data.rowColumnIndex.rowIndex - 1]
-                                      .getCells()[0]
-                                      .value)]);
+                                      commonDataSource.dataGridRows[
+                                              data.rowColumnIndex.rowIndex - 1]
+                                          .getCells()[0]
+                                          .value) -
+                                  1]);
                               // listNodes.singleWhere((element) =>
                               //     element.nom ==
                               //     commonDataSource.dataGridRows[

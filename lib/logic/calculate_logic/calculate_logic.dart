@@ -127,7 +127,7 @@ class CalculateLogic {
       if (fatigue + stressOutside <= stressAllowable) return true;
     } else {
       if (fatigue + stressOutside <= stressAllowable &&
-          resonanceFatigue + stressOutside <= stressAllowable) return true;
+          resonanceFatigue + stressOutside <= stressFatigue) return true;
     }
     return false;
   }

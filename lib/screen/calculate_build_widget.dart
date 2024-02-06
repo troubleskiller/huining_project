@@ -160,6 +160,26 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                     ),
                     Container(
                       width: 300,
+                      child: TroSelect(
+                        value: initCalculate.connection,
+                        dataList: [
+                          SelectOptionVO(value: '法兰', label: '法兰'),
+                          SelectOptionVO(value: '焊接', label: '焊接'),
+                          SelectOptionVO(value: '螺纹', label: '螺纹'),
+                        ],
+                        label: '工艺连接',
+                        width: 280,
+                        labelWidth: 180,
+                        labelStyle: TextStyle(
+                          fontSize: 12,
+                        ),
+                        onChange: (data) {
+                          initCalculate.connection = data;
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: 300,
                       child: TroInput(
                         label: '凸台(mm)',
                         width: 280,
@@ -170,6 +190,48 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                         ),
                         onChange: (data) {
                           initCalculate.boss = num.tryParse(data);
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: 300,
+                      child: TroSelect(
+                        value: initCalculate.material,
+                        dataList: [
+                          SelectOptionVO(value: '304', label: '304'),
+                          SelectOptionVO(value: '316', label: '316'),
+                          SelectOptionVO(value: '304L', label: '304L'),
+                          SelectOptionVO(value: '316L', label: '316L'),
+                          SelectOptionVO(value: 'GH3039', label: 'GH3039'),
+                          SelectOptionVO(value: 'GH3030', label: 'GH3030'),
+                          SelectOptionVO(value: '310S', label: '310S'),
+                          SelectOptionVO(value: 'GH2520', label: 'GH2520'),
+                          SelectOptionVO(value: '321SS', label: '321SS'),
+                          SelectOptionVO(value: 'Monel', label: 'Monel'),
+                          SelectOptionVO(value: '钽Ta', label: '钽Ta'),
+                          SelectOptionVO(value: '钛Ti', label: '钛Ti'),
+                          SelectOptionVO(value: '双相不锈钢', label: '双相不锈钢'),
+                          SelectOptionVO(
+                              value: 'Inconel600', label: 'Inconel600'),
+                          SelectOptionVO(value: 'S31803', label: 'S31803'),
+                          SelectOptionVO(
+                              value: '双相不锈钢2205', label: '双相不锈钢2205'),
+                          SelectOptionVO(
+                              value: '超级双相不锈钢S32750', label: '超级双相不锈钢S32750'),
+                          SelectOptionVO(value: '其他材质', label: '其他材质'),
+                        ],
+                        label: '套管材质',
+                        width: 280,
+                        labelWidth: 180,
+                        labelStyle: TextStyle(
+                          fontSize: 12,
+                        ),
+                        onChange: (data) {
+                          setState(() {
+                            initCalculate.densityOfMaterial =
+                                materialMap[data] ?? 0.29;
+                            initCalculate.material = data;
+                          });
                         },
                       ),
                     ),
@@ -206,7 +268,7 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                     Container(
                       width: 300,
                       child: TroInput(
-                        label: '材质密度(kg/m3)',
+                        label: '材质密度γ(lb/in3)',
                         width: 280,
                         labelWidth: 180,
                         value: '${initCalculate.densityOfMaterial ?? '请输入'}',
@@ -309,68 +371,6 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                       ),
                     ),
                     Container(
-                      width: 300,
-                      child: TroSelect(
-                        value: initCalculate.connection,
-                        dataList: [
-                          SelectOptionVO(value: '法兰', label: '法兰'),
-                          SelectOptionVO(value: '焊接', label: '焊接'),
-                          SelectOptionVO(value: '螺纹', label: '螺纹'),
-                        ],
-                        label: '工艺连接',
-                        width: 280,
-                        labelWidth: 180,
-                        labelStyle: TextStyle(
-                          fontSize: 12,
-                        ),
-                        onChange: (data) {
-                          initCalculate.connection = data;
-                        },
-                      ),
-                    ),
-                    Container(
-                      width: 300,
-                      child: TroSelect(
-                        value: initCalculate.material,
-                        dataList: [
-                          SelectOptionVO(value: '304', label: '304'),
-                          SelectOptionVO(value: '316', label: '316'),
-                          SelectOptionVO(value: '304L', label: '304L'),
-                          SelectOptionVO(value: '316L', label: '316L'),
-                          SelectOptionVO(value: 'GH3039', label: 'GH3039'),
-                          SelectOptionVO(value: 'GH3030', label: 'GH3030'),
-                          SelectOptionVO(value: '310S', label: '310S'),
-                          SelectOptionVO(value: 'GH2520', label: 'GH2520'),
-                          SelectOptionVO(value: '321SS', label: '321SS'),
-                          SelectOptionVO(value: 'Monel', label: 'Monel'),
-                          SelectOptionVO(value: '钽Ta', label: '钽Ta'),
-                          SelectOptionVO(value: '钛Ti', label: '钛Ti'),
-                          SelectOptionVO(value: '双相不锈钢', label: '双相不锈钢'),
-                          SelectOptionVO(
-                              value: 'Inconel600', label: 'Inconel600'),
-                          SelectOptionVO(value: 'S31803', label: 'S31803'),
-                          SelectOptionVO(
-                              value: '双相不锈钢2205', label: '双相不锈钢2205'),
-                          SelectOptionVO(
-                              value: '超级双相不锈钢S32750', label: '超级双相不锈钢S32750'),
-                          SelectOptionVO(value: '其他材质', label: '其他材质'),
-                        ],
-                        label: '套管材质',
-                        width: 280,
-                        labelWidth: 180,
-                        labelStyle: TextStyle(
-                          fontSize: 12,
-                        ),
-                        onChange: (data) {
-                          setState(() {
-                            initCalculate.densityOfMaterial =
-                                materialMap[data] ?? 0.29;
-                            initCalculate.material = data;
-                          });
-                        },
-                      ),
-                    ),
-                    Container(
                       width: 295,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -408,7 +408,7 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                                 initCalculate.pipeSize = num.tryParse(data);
                               } else {
                                 initCalculate.pipeSize =
-                                    num.tryParse(data) ?? 0 / 25.4;
+                                    (num.tryParse(data) ?? 0) / 25.4;
                               }
                             },
                           ),
@@ -451,7 +451,7 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                                 initCalculate.pressure = num.tryParse(data);
                               } else {
                                 initCalculate.pressure =
-                                    num.tryParse(data) ?? 0 / 1800;
+                                    (num.tryParse(data) ?? 0) / 1000;
                               }
                             },
                           ),
@@ -579,7 +579,7 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                       width: 300,
                       child: TroInput(
                         enable: false,
-                        label: '频率比',
+                        label: '频率比(r=fw/fn)',
                         width: 280,
                         labelWidth: 180,
                         value: '${calculateResult.freRatio ?? '等待计算'}',
@@ -714,7 +714,7 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                       width: 300,
                       child: TroInput(
                         enable: false,
-                        label: '共振弯矩',
+                        label: '共振弯矩ML(N*mm)',
                         width: 280,
                         labelWidth: 180,
                         value: '${calculateResult.resonanceML ?? '等待计算'}',

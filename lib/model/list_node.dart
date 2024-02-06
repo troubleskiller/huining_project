@@ -267,7 +267,7 @@ class CommonDataSource extends DataGridSource {
       return DataGridRow(cells: [
         DataGridCell<String>(
             columnName: 'no',
-            value: commonData.indexOf(dataGridRow).toString()),
+            value: (commonData.indexOf(dataGridRow) + 1).toString()),
         DataGridCell<String>(columnName: 'nom', value: dataGridRow.nom),
         DataGridCell<Widget>(
             columnName: 'delete',
