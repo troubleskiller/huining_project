@@ -22,10 +22,12 @@ class CalculateBuildWidget extends StatefulWidget {
 
 class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
   ListNode? curListNode;
+  ListNode? curList;
 
   set(ListNode listNode) {
     setState(() {
       curListNode = ListNode.copyWith(listNode);
+      curList = listNode;
     });
   }
 
@@ -479,6 +481,8 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                                       CalculateLogic.calculate(initCalculate) ??
                                           CalculateResult();
                                   curListNode?.ans = res;
+                                  widget.calculate
+                                      .call(curList, curListNode, true);
                                   setState(() {});
                                 },
                                 child: Text(
@@ -507,7 +511,7 @@ class CalculateBuildWidgetState extends State<CalculateBuildWidget> {
                                       CalculateLogic.calculate(initCalculate) ??
                                           CalculateResult();
                                   node.ans = res;
-                                  widget.calculate.call(node);
+                                  widget.calculate.call(curList, node, false);
                                   setState(() {});
                                 },
                                 child: Text(

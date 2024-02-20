@@ -27,6 +27,11 @@ class ListNode extends ChangeNotifier {
       ans: listNode.ans,
     );
   }
+
+  @override
+  String toString() {
+    return 'ListNode{nom: $nom, data: $data, ans: $ans}';
+  }
 }
 
 ///这是具体数据包含的内容（入参：计算之前的）

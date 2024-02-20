@@ -67,7 +67,7 @@ class _MainPageState extends State<MainPage> {
       'Re',
       '截面A(m2)',
       '流体力F(N)',
-      '跟部弯矩M(N*mm)',
+      '根部弯矩M(N*mm)',
       '根部弯应力σB(MPa)',
       '外压应力σP(MPa)',
       '共振流速Vr(m/s)',
@@ -425,8 +425,14 @@ class _MainPageState extends State<MainPage> {
   ///右侧数据计算
   Widget buildCalculate() {
     return CalculateBuildWidget(
-      calculate: (ListNode cur) {
-        listNodes.add(ListNode(nom: cur.nom, data: cur.data, ans: cur.ans));
+      calculate: (ListNode bef, ListNode cur, bool isEdit) {
+        if (isEdit) {
+          int a = listNodes.indexOf(bef);
+          listNodes[a] = cur;
+        } else {
+          listNodes.add(ListNode(nom: cur.nom, data: cur.data, ans: cur.ans));
+        }
+
         setState(() {});
       },
     );
